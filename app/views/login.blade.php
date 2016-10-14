@@ -74,12 +74,23 @@
       <img src="{{URL::to('/images/logo.png')}}" class="image">
       
     </h2>
-    {{ Form::open(array('url' => 'login','class' => 'ui large form')) }}
+    {{ Form::open(array('route' => 'login','method' => 'post','class' => 'ui large form')) }}
       <div class="ui segment">
+      @if (count($errors) > 0)
+            
+   <div class="ui red message"  style="text-align:right">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li >{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+        
+@endif
         <div class="field">
           <div class="ui right icon input">
             <i class="user icon"></i>
-            <input type="text" name="email" placeholder="اسم المستخدم">
+            <input type="text" name="username" placeholder="اسم المستخدم">
           </div>
         </div>
         <div class="field">
@@ -88,15 +99,18 @@
             <input type="password" name="password" placeholder="كلمة السر">
           </div>
         </div>
-        <div class="ui fluid large teal submit button">الدخول</div>
+       <!--  <div class="ui fluid large teal submit button"></div> -->
+          <button class="ui fluid large teal  submit button">
+    الدخول
+    </button>
       </div>
 
       <div class="ui error message"></div>
 
-    </form>
+       {{ Form::close() }}
 
     <div class="ui message">
-      لاتملك حساب <a href="#">سجل الان</a>
+      لاتملك حساب <a href="{{ URL::route('register') }}">سجل الان</a>
     </div>
   </div>
 </div>

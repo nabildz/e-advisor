@@ -8,11 +8,11 @@ class StudentController extends \BaseController {
 	    return View::make('login');
 	}
 
-    public function doLogin()
+    public function do_Login()
 	{
 		$rules = array(
 		    'username'    => 'required', 
-		    'password' => 'required|min:3' 
+		    'password' => 'required' 
 		);
 
 		$validator = Validator::make(Input::all(), $rules);
@@ -20,21 +20,21 @@ class StudentController extends \BaseController {
 		if ($validator->fails()) 
 			{
 
-		    return Redirect::to('login')->withErrors($validator)->withInput(Input::except('password'));
-
-		    $userdata = array(
-		        'username'     => Input::get('username'),
-		        'password'  => Input::get('password')
-		    );
-
-		    if (Auth::attempt($userdata)) {
-		         return Redirect::to('home');
-		    } 
-		    else {        
-		        return Redirect::to('login');
-		    }
+		    return Redirect::to('show_login')->withErrors($validator)->withInput(Input::except('password'));
 		}
 
+			  $userdata = array(
+					        'username'  => Input::get('username'),
+					        'password'  => Input::get('password')
+					    );
+
+					    if (Auth::attempt($userdata)) {
+					         return Redirect::to('home');
+					    } 
+					    else {        
+					    	echo "lol";
+					        return Redirect::to('show_login');
+					    }
 	}
 
     public function doLogout()
@@ -82,7 +82,7 @@ class StudentController extends \BaseController {
 		$student->depratment = Input::get('depratment');
 
         if ($student->save()) {
-        	 return Response::view('warnings.success');
+        	 return Response::view('messages.registration-success');
         }
 		}
 		

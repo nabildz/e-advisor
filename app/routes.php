@@ -12,7 +12,7 @@
 */
 
 Route::get('/', 'StudentController@register');
-Route::get('guide', 'GuideController@guide');
+Route::get('home', 'GuideController@guide');
 
 
 /*

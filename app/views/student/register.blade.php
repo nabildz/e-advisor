@@ -10,10 +10,10 @@
   <title>المرشد الإلكتروني - التسجيل</title>
 
   <link href="https://fonts.googleapis.com/css?family=Cairo|Mirza" rel="stylesheet">
-  <link href="{{URL::to('/css/semantic.min.css')}}" rel="stylesheet">
-  <link href="{{URL::to('/css/font-awesome.min.css')}}" rel="stylesheet">
-  <script src="{{URL::to('/js/jquery.min.js')}}"></script>
-  <script src="{{URL::to('/js/semantic.js')}}"></script>
+  <link href="{{asset('/css/semantic.min.css')}}" rel="stylesheet">
+  <link href="{{asset('/css/font-awesome.min.css')}}" rel="stylesheet">
+  <script src="{{asset('/js/jquery.min.js')}}"></script>
+  <script src="{{asset('/js/semantic.js')}}"></script>
 
 <link rel="apple-touch-icon" sizes="180x180" href="{{asset('/images/favicons/apple-touch-icon.png')}}">
 <link rel="icon" type="image/png" href="{{asset('/images/favicons/favicon-32x32.png')}}" sizes="32x32">
@@ -59,7 +59,7 @@
 <div class="ui middle aligned center aligned grid">
   <div class="column">
       <h3 class="ui teal image header">
-      <img src="{{URL::to('/images/logo.png')}}" class="image">
+      <img src="{{asset('/images/logo.png')}}" class="image">
       
     </h3>
   
@@ -108,14 +108,14 @@
         <div class="default text">اختر التخصص</div>
         <div class="menu">
         @foreach( $departments as $depratment)
-          <div class="item @if ( Input::old('depratment') === $depratment->prefix ) selected @endif" data-value="{{ $depratment->prefix }}">{{ $depratment->title }}</div>
+          <div class="item @if( Input::old('depratment') === $depratment->prefix ) selected @endif" data-value="{{ $depratment->prefix }}">{{ $depratment->title }}</div>
         @endforeach
         </div>
       </div>
         </div>
  <div class="ui divider"></div>
 
-          <button class="ui fluid large teal submit button">
+          <button class="ui fluid large teal basic submit button">
       التسجيل
     </button>
       </div>
