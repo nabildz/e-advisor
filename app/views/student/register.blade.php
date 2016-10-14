@@ -32,7 +32,7 @@
     .image {
       
 
-        margin-top: 100px;
+        margin-top: 50px;
 
     }
     .column {
@@ -70,24 +70,35 @@
    {{ Form::open(array('route' => 'store_student','method' => 'post','class' => 'ui large form')) }}
 
       <div class="ui segment">
+        @if (count($errors) > 0)
+            
+   <div class="ui red message"  style="text-align:right">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li >{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+        
+@endif
        <div class="field">
-         <div class="field">
+         <div class="field ">
           <div class="ui right icon input">
             <i class="user icon"></i>
-            <input type="text" name="name" placeholder="الاسم">
+            <input type="text" name="name" placeholder="الاسم" value="{{ Input::old('name') }}">
           </div>
         </div>
         </div>
         <div class="field">
           <div class="ui right icon input">
             <i class="user icon"></i>
-            <input type="text" name="username" placeholder="اسم المستخدم">
+            <input type="text" name="username" placeholder="اسم المستخدم" value="{{ Input::old('username') }}">
           </div>
         </div>
         <div class="field">
           <div class="ui right icon input">
             <i class="lock icon"></i>
-            <input type="password" name="password" placeholder="كلمة السر">
+            <input type="password" name="password" placeholder="كلمة السر" value="{{ Input::old('password') }}">
           </div>
         </div>
  <div class="field">
@@ -96,8 +107,9 @@
         <i class="dropdown icon"></i>
         <div class="default text">اختر التخصص</div>
         <div class="menu">
-          <div class="item" data-value="male">عام</div>
-          <div class="item" data-value="female">هندسة البرمجيات</div>
+        @foreach( $departments as $depratment)
+          <div class="item @if ( Input::old('depratment') === $depratment->prefix ) selected @endif" data-value="{{ $depratment->prefix }}">{{ $depratment->title }}</div>
+        @endforeach
         </div>
       </div>
         </div>

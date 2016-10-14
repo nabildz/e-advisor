@@ -50,7 +50,9 @@ class GuideController extends \BaseController {
 
 	public function guide()
 	{
-		$cources_arra=array( 'root'=>array('v1','',0),'IT101'=>array('v1','root',0),
+		$cources_arra=array( 
+	'root'=>array('v1','',0),
+	'IT101'=>array('v1','root',0),
 	'IT111'=>array('v1','root',0),
 	'GE111'=>array('v1','root',0),
 	'GS111'=>array('v1.-v5','root',0),

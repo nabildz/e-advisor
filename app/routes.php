@@ -33,5 +33,5 @@ Route::get('logout',  ['as' => 'Logout',  'uses' =>  'StudentController@do_Logou
 |
 */
 
-Route::get('register',  ['as' => 'show_register',  'uses' =>  'StudentController@register']);
+Route::get('register',  ['as' => 'register',  'uses' =>  'StudentController@register']);
 Route::post('regisered',  ['as' => 'store_student',  'uses' =>  'StudentController@store_student']);

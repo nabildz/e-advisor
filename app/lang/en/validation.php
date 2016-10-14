@@ -86,6 +86,18 @@ return array(
 		'attribute-name' => array(
 			'rule-name' => 'custom-message',
 		),
+		'name' => array(
+			'required' => 'رجاء ادخال الاسم',
+		),
+		'username' => array(
+			'required' => 'رجاء ادخال الاسم المستحدم',
+		),
+		'password' => array(
+			'required' => 'رجاء ادخال كلمة السر',
+		),
+		'depratment' => array(
+			'required' => 'رجاء اختيار التخصص',
+		),
 	),
 
 	/*
