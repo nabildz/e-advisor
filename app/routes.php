@@ -12,8 +12,9 @@
 */
 
 Route::get('/', 'StudentController@register');
-Route::get('home', 'GuideController@guide');
-
+Route::get('home',  ['before' => 'auth','as' => 'home',  'uses' =>  'GuideController@home']);
+Route::get('guide',  ['before' => 'auth','as' => 'guide',  'uses' =>  'GuideController@guide']);
+Route::get('courses',  ['before' => 'auth','as' => 'courses',  'uses' =>  'GuideController@courses']);
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +25,7 @@ Route::get('home', 'GuideController@guide');
 
 Route::get('login',   ['as' => 'show_login',  'uses' =>  'StudentController@show_Login']);
 Route::post('login',  ['as' => 'login',  'uses' =>  'StudentController@do_Login']);
-Route::get('logout',  ['as' => 'Logout',  'uses' =>  'StudentController@do_Logout']);
+Route::get('logout',  ['before' => 'auth','as' => 'logout',  'uses' =>  'StudentController@do_Logout']);
 
 /*
 |--------------------------------------------------------------------------

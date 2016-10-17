@@ -1,5 +1,6 @@
 <?php
 
+
 class StudentController extends \BaseController {
 
 
@@ -29,15 +30,16 @@ class StudentController extends \BaseController {
 					    );
 
 					    if (Auth::attempt($userdata)) {
+					    	
 					         return Redirect::to('home');
 					    } 
 					    else {        
-					    	echo "lol";
-					        return Redirect::to('show_login');
+					    	echo "lol nno";
+					        // return Redirect::to('show_login');
 					    }
 	}
 
-    public function doLogout()
+    public function do_Logout()
 	{
 	    Auth::logout(); 
 	    return Redirect::to('login');
@@ -78,7 +80,7 @@ class StudentController extends \BaseController {
 		$student = new Student;
 		$student->name = Input::get('name');
 		$student->username = Input::get('username');
-		$student->password = Input::get('password');
+		$student->password = Hash::make(Input::get('password'));
 		$student->depratment = Input::get('depratment');
 
         if ($student->save()) {
