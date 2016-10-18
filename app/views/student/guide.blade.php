@@ -19,21 +19,21 @@
       <th>الوحدات</th>
     </tr>
   </thead>
+
   <tbody>
   @foreach ($courses as $course)
-  
     <tr>
-      <td>{{ $course[0] }}</td>
-      <td>{{ $course[1] }}</td>
+      <td>{{ $course['prefix'] }}</td>
+      <td>{{ $course['title']  }}</td>
         <td>{{ "تصنيف" }}</td>
           <td>{{ "3" }}</td>
     </tr>
-
-@endforeach
-    
+  @endforeach
   </tbody>
+  
 </table>
 
 <button class="big ui  button fluid">طباعة</button>
 
+<br>
 @stop

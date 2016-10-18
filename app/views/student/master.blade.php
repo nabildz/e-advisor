@@ -51,8 +51,7 @@
 
 }
   </style>
-  </style>
-
+      @yield('css')
 </head>
 <body class="Site"> 
 <div class="Site-content">

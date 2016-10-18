@@ -9,16 +9,16 @@
      <div class="ui three column grid">
     <div class="row">
    
-     <div class="wide column"> <button class="big ui blue button fluid">الى المرشد</button></div>
-         <div class="wide column"> <button class="big ui green button fluid">اضافة مادة جديدة +</button></div>
-              <div class="wide column"> <button class="big ui  button fluid">تعديل المعلومات الشخصية</button></div>
+    	<div class="wide column"> <button class="big ui blue button fluid"><a style="color:#ffffff!important;" href="{{ URL::route('guide') }}">الى المرشد</a></button></div>
+		<div class="wide column"> <button class="big ui green button fluid"><a style="color:#ffffff!important;" href="{{ URL::route('courses') }}">اضافة مادة جديدة +</a></button></div>
+		<div class="wide column"> <button class="big ui  button fluid"><a style="color:#000000!important;" href="{{ URL::route('guide') }}">تعديل المعلومات الشخصية</a></button></div>
 
 
   </div>
 
   </div>
 
-
+ <br>
    
     <h2 class="ui header">احصائيات</h2>
 
@@ -28,8 +28,11 @@
          <div class=" column"> 
      <div class="ui card">
   <div class="content">
-    <div class="header"><i class="fa fa-book" aria-hidden="true"></i> 27</div>
-    <div class="meta">مادة تم تصفيتها</div>
+    <div class="header"><i class="fa fa-book" aria-hidden="true"></i> {{ $count1 }}</div>
+    <br>
+    <div class="meta">مادة</div>
+         <div class="meta"> تم
+ تصفيتها</div>
   
   </div>
 </div></div>
@@ -37,17 +40,22 @@
          <div class=" column"> 
      <div class="ui card">
   <div class="content">
-    <div class="header"><i class="fa fa-book" aria-hidden="true"></i> 15</div>
-    <div class="meta">مادة تخصص تم
+    <div class="header"><i class="fa fa-book" aria-hidden="true"></i> {{ $count2 }}</div>
+      <br>
+    <div class="meta">مادة تخصص </div>
+      <div class="meta"> تم
  تصفيتها</div>
+   
    
   </div>
 </div></div>
          <div class=" column"> 
      <div class="ui card">
   <div class="content">
-    <div class="header"><i class="fa fa-book" aria-hidden="true"></i> 13</div>
-    <div class="meta">مادة عامة تم
+    <div class="header"><i class=" fa fa-book" aria-hidden="true"></i>  {{ $count3 }}</div>
+      <br>
+    <div class="meta">مادة عامة </div>
+         <div class="meta"> تم
  تصفيتها</div>
    
   </div>
@@ -56,7 +64,9 @@
      <div class="ui card">
   <div class="content">
     <div class="header"><i class="fa fa-bar-chart" aria-hidden="true"></i></div>
-    <div class="meta">المزيد من الاحصائيات</div>
+      <br>
+    <div class="meta">المزيد من </div>
+         <div class="meta"> الاحصائيات</div>
   
   </div>
 </div></div>
