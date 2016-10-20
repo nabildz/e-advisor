@@ -3,25 +3,53 @@
 class GuideController extends \BaseController {
 
 	public function Home(){
-		$count1 = StudentsCourses::count();
-		$count2 = StudentsCourses::where('course','like','%'.Auth::user()->depratment.'%')->count();
-		$count3 = StudentsCourses::where('course','not like','%se%')->where('course','not like','%se%')->
+		$count1 = StudentsCourses::where('student_id',Auth::user()->id)->count();
+		$count2 = StudentsCourses::where('student_id',Auth::user()->id)->where('course','like','%'.Auth::user()->depratment.'%')->count();
+		$count3 = StudentsCourses::where('student_id',Auth::user()->id)->where('course','not like','%se%')->where('course','not like','%se%')->
 		where('course','not like','%cn%')->
 		where('course','not like','%ce%')->where('course','not like','%is%')->where('course','not like','%cs%')->count();
-    return View::make('student.home',array('count1'=> $count1,'count2'=> $count2,'count3'=> $count3));
+		return View::make('student.home',array('count1'=> $count1,'count2'=> $count2,'count3'=> $count3));
 	}
 
 	public function courses(){
 		$departments = Departments::all();
 		$courses = Courses::all();
-    return View::make('student.courses', array('departments' => $departments,'courses' => $courses));
-	
+		return View::make('student.courses', array('departments' => $departments,'courses' => $courses));
+		
+
 	}
 
+		
 
-	public function FindPriority($cource_name,$cource_opens,$priority_array)
-	{	
-	if(array_key_exists($cource_name,$cource_opens)){
+	public function store_courses(){
+		$coursesNo = Input::get('coursesNo');
+		for ($id=1; $id <= $coursesNo  ; $id++) { echo "<br>";
+
+			$coursecheck = Input::get('course'.$id);
+
+		if ($coursecheck != "") {
+			// echo "xxx";
+			$course = new StudentsCourses;
+			$course->course = Input::get('course'.$id);
+			$course->student_id = Auth::user()->id;
+			$save= $course->save();
+			if ($save) {
+				// echo "تم اضافة ".Input::get('course'.$id)." بنجاح";
+			}
+			
+			// echo "<br>";echo "<br>";
+		}
+
+	}
+
+ return Response::view('messages.add-success');
+
+}
+
+
+public function FindPriority($cource_name,$cource_opens,$priority_array)
+{	
+		if(array_key_exists($cource_name,$cource_opens)){
 		for ($i=0; $i <sizeof($cource_opens[$cource_name]) ; $i++) { 
 			$priority_array=$this->FindPriority($cource_opens[$cource_name][$i],$cource_opens,$priority_array);
 			$priority_array[$cource_name]=$priority_array[$cource_name]+$priority_array[$cource_opens[$cource_name][$i]];
@@ -29,11 +57,11 @@ class GuideController extends \BaseController {
 		$priority_array[$cource_name]=$priority_array[$cource_name]+sizeof($cource_opens[$cource_name]);
 	}
 	return $priority_array;
-	}
+}
 
-	public function GetMaterialFromVersion($LookingForVersion,$NAV,$Vtree,$cources)
-	{
-		
+public function GetMaterialFromVersion($LookingForVersion,$NAV,$Vtree,$cources)
+{
+
 	$cources_arra_keys=array_keys($cources);
 	$mate_pure=array();
 	for ($i=0; $i <sizeof($cources) ; $i++) { 
@@ -49,7 +77,7 @@ class GuideController extends \BaseController {
 		}
 	}
 	if(array_key_exists($LookingForVersion,$Vtree)){
-	
+
 		for ($i=0; $i <sizeof($Vtree[$LookingForVersion]) ; $i++) { 
 			if(in_array($Vtree[$LookingForVersion][$i], $NAV,true)){}else{
 				$mate=array();
@@ -61,134 +89,62 @@ class GuideController extends \BaseController {
 		}
 	}
 	return $mate_pure;
-	}
-
-
-	public function guide()
-	{
-		$root_index = Plans::where('course', 'root')->get()->toArray();
-		$root_plan = Plans::where('pre_courses', 'root')->get()->toArray();
-		$genral_plan = Plans::where('department', Auth::user()->depratment)->get()->toArray();
-		$department_plan = Plans::where('department', Auth::user()->depratment)->get()->toArray();
-		$x = array_merge($root_index,$root_plan, $genral_plan,$department_plan);
-// print_r($cources_arra);
-
-
-for ($i=0; $i <sizeof($x) ; $i++) { 
-	if(in_array('addout',$x[$i],true)){
-		$cources_arra[$x[$i]['course']] = array($x[$i]['version'],$x[$i]['pre_courses'],$x[$i]['elective'],$x[$i]['units']);
-	}elseif (in_array('add',$x[$i],true)) {
-		$cources_arra[$x[$i]['course']] = array($x[$i]['version'],$x[$i]['pre_courses'],$x[$i]['elective'],$x[$i]['units']);
-	}else{
-		$cources_arra[$x[$i]['course']] = array($x[$i]['version'],$x[$i]['pre_courses'],$x[$i]['units']);
-	}
 }
 
+
+public function guide()
+{
+	
+	$root_index = Plans::where('course', 'root')->get()->toArray();
+	// print_r($root_index);
+	$root_plan = Plans::where('pre_courses', 'root')->get()->toArray();
+	$all_plan = Plans::all()->toArray();
+	$department_plan = Plans::where('department', Auth::user()->depratment)->get()->toArray();
+	 $x = array_merge($root_index,$all_plan);
+	// $x= $all_plan;
+// print_r($cources_arra = arr);
+
+	$cources_arra =array();
+	$y=Auth::user()->depratment;
+
+for ($i=0; $i <sizeof($x) ; $i++) { 
+	if (in_array('it',$x[$i],true) || in_array($y,$x[$i],true)) {
+		if (in_array('add',$x[$i],true)) {
+			$cources_arra[$x[$i]['course']] = array($x[$i]['version'],$x[$i]['pre_courses'],$x[$i]['elective'],$x[$i]['semesterNo'],$x[$i]['units']);
+		}else{
+			$cources_arra[$x[$i]['course']] = array($x[$i]['version'],$x[$i]['pre_courses'],$x[$i]['semesterNo'],$x[$i]['units']);
+		}	
+	}else{
+		if (! array_key_exists($x[$i]['course'], $cources_arra)) {
+			$cources_arra[$x[$i]['course']] = array($x[$i]['version'],$x[$i]['pre_courses'],'addout',7,$x[$i]['units']);
+		}
+	}
+
+}
 // print_r($cources_arra);
-// // $array = array();
-// // 		foreach ($final_plans as $plan ) {
-// // 			$cources_arra[$plan['course']]=array($plan['version'],$plan['pre_courses'],$plan['elective'],$plan['units']);
-		   
-// // 		}
-
-// 		$StudentsCourses2 = StudentsCourses::where('student_id',Auth::user()->id)->lists('course');
-// 		$courses =  array_values($StudentsCourses2);
-		// $courses[] =  array_unshift($courses,'root');
-
-// print_r($courses);
-// echo "<br>";
-
-// echo "<br>";echo "<br>";echo "<br>";echo "<br>";
-// print_r($root_plan);
-// print_r($department_plan);
-
-// 		$plan = DB::table('plans')->join('plans', 'pre_courses', 'root')->join('plans', 'department', Auth::user()->depratment)->get();
-// print_r($plan);
-
-
-		// $StudentsCourses = DB::table('students_courses')->where('student_id', Auth::user()->id)->get()->toArray();
-
-	
-		//  		print_r($courses);
-		// // $courses[] =  array_unshift($courses, 'root');
-
-		// // print_r($courses);
-		//  		echo "<br>";
-		//  // $courses2=['root','IT111','GS113','IT101','IT112','SE201'];
-				// $courses2 =  array_unshift($courses2, 'root');
+		$StudentsCourses2 = StudentsCourses::where('student_id',Auth::user()->id)->lists('course');
+		$courses =  array_values($StudentsCourses2);
+		$addroot =  array_unshift($courses,'root');
 		// print_r($courses);
-// 		$cources_arra=array( 
-// 	'root'=>array('v1','',0),
-// 	'IT101'=>array('v1','root',0),
-// 	'IT111'=>array('v1','root',0),
-// 	'GE111'=>array('v1','root',0),
-// 	'GS111'=>array('v1.-v5','root',0),
-// 	'GS113'=>array('v5','root',0),
-// 	'GS114'=>array('v5','GS113',0),
-// 	'GS213'=>array('v5','GS114',0),
-// 	'GE101'=>array('v1','root',0),
-// 	'GE131'=>array('v1.-v4','root',0),
-// 	'GE132'=>array('v1.-v2','GE131',0),
-// 	''GE331=>array('v4','root',0),
-// 	'Ge331'=>array('v2','GE131',0),
-// 	'GS141'=>array('v1','root',0),
-// 	'IT112'=>array('v1','IT111',0),
-// 	'IT121'=>array('v1','IT101',0),
-// 	'GS112'=>array('v1.-v5','GS111',0),
-// 	'GE112'=>array('v1','GE111',0),
-// 	'IT212'=>array('v1','IT112',0),
-// 	'IT201'=>array('v1','GS111,IT111',0),
-// 	'GS221'=>array('v1.-v5','GS112',0),
-// 	'Gs221'=>array('v5','GS114',0),
-// 	'GE231'=>array('v1','GE132',0),
-// 	'IT222'=>array('v1','IT202,IT221',0),
-// 	'IT271'=>array('v1','IT221',0),
-// 	'GE232'=>array('v1','GE231',0),
-// 	'GE311'=>array('v1','GE112',0),
-// 	'IT341'=>array('v1','IT212',0),
-// 	'IT322'=>array('v1','IT212',0),
-// 	'IT342'=>array('v1','IT271',0),
-// 	'IT301'=>array('v1','IT101,IT111',0),
-
-// 	'SE201'=>array('v1','IT112',0),
-// 	'SE211'=>array('v1','SE201',0),
-// 	'CN281'=>array('v1','IT112',0),
-// 	'CS211'=>array('v1','IT201,IT112',0),
-// 	'IS201'=>array('v1','IT112',0),
-// 	'SE312'=>array('v1','SE201,IT201',0),
-// 	'SE321'=>array('v1','SE201',0),
-// 	'SE322'=>array('v1','SE201',0),
-// 	'SE331'=>array('v1','SE201',0),
-// 	'SE341'=>array('v1','SE201',0),
-// 	'SE441'=>array('v1','SE321',0),
-// 	'SE461'=>array('v1','SE321',0),
-// 	'SE490'=>array('v1','IT341,SE321',0),
-// 	'SE492'=>array('v1','SE201',0),
-	
-// 	'SE301'=>array('v1','SE201','add',0),
-// 	'SE421'=>array('v1','SE321','add',0),
-// 	'SE422'=>array('v1','SE321','add',0),
-// 	'SE443'=>array('v1','SE321','add',0),
-// 	'CS331'=>array('v1','IT112','add',0),
-// 	'CS451'=>array('v1','IT212,IT201','add',0),
-// 	'CS471'=>array('v1','IT322','add',0),
-	// 'IS475'=>array('v1','IS201,CN281','add',0));
-// print_r($cources_arra2);
-// root cource must always be taken and added in the code for the b33 to work
-$courses=['root'];
-// //echo "  all cources <br>";
 $V_Array=array();
 $material=array();
 $notInPlan=array();
-//echo 
+//echo
+
+//to find the Vs that are not in plan
 for ($i=0; $i < sizeof($courses); $i++) { 
 	$Vmat=explode(".-",$cources_arra[$courses[$i]][0]);
 	if (sizeof($Vmat)==2) {
 		$notInPlan[sizeof($notInPlan)]=$Vmat[1];	
 	}
 }
+//echo "  what's not allowed <br>";
 //print_r($notInPlan);
+//echo "<br>";
+//cources names:-
 $cources_arra_keys=array_keys($cources_arra);
+
+
 for ($i=0; $i < sizeof($cources_arra); $i++) { 
 	$d2=explode(".-",$cources_arra[$cources_arra_keys[$i]][0]);
 	if (sizeof($d2)==2) {
@@ -204,11 +160,13 @@ for ($i=0; $i < sizeof($cources_arra); $i++) {
 		}
 	}	
 }
-// echo "  what's not allowed <br>";
+// echo " tree of versions <br>";
 //print_r($V_Array);
-//echo " tree of versions <br>";
+//echo "<br> all the courses that you should study <br>";
+
 $material=$this->GetMaterialFromVersion('v1',$notInPlan,$V_Array,$cources_arra);
 //print_r($material);
+
 //echo "<br> now we make the academic guidance!!<br>";
 // first thing, priority will be set based on how many cources it will eventually opens lol
 $priority_array_main=array();
@@ -239,12 +197,22 @@ for ($i=0; $i <sizeof($material) ; $i++) {
 		}
 	}
 }
-// print_r($cource_opens);
-// echo "<br><br><br><br>";
-$priority_array_main=$this->FindPriority('root',$cource_opens,$priority_array_main);
-// print_r($priority_array_main);
-// echo "<br><br><br><br>";
+
+//print_r($cource_opens);
+//
+//echo "<br><br><br><br>";
+$priority_array_main=$this->findPriority('root',$cource_opens,$priority_array_main);
+//print_r($priority_array_main);
+//echo "<br><br><br><br>";
+
 //$courses=['root','IT101'];
+$number_of_units_taken=0;
+for ($i=0; $i <sizeof($courses) ; $i++) { 
+	$number_of_units_taken=$number_of_units_taken+$cources_arra[$courses[$i]][sizeof($cources_arra[$courses[$i]])-1];
+}
+
+// echo "<br> number of units=".$number_of_units_taken."<br>";
+
 $Cneeded=array();
 for ($i=0; $i <sizeof($courses) ; $i++) { 
 	if (array_key_exists($courses[$i],$cource_opens)) {
@@ -259,37 +227,45 @@ for ($i=0; $i <sizeof($courses) ; $i++) {
 		}
 	}
 }
+//echo "<br>b33333333333<br>";
 //print_r($Cneeded);
 //echo "<br><br>";
+
 $Copened=array();
 for ($i=0; $i <sizeof($Cneeded) ; $i++) { 
 	$kkk="";
 	$d2=explode(",",$cources_arra[$Cneeded[$i]][1]);
-	if (in_array($d2[0],$courses,true)) {
-		$kkk="1";
-	}
-	if(sizeof($d2)==2){
-		if (in_array($d2[1],$courses,true)) {
+	for ($j=0; $j <sizeof($d2) ; $j++) { 
+		if (in_array($d2[$j],$courses,true)) {
 			$kkk=$kkk."1";
-		}	
-	}else{
-		$kkk=$kkk."1";
+		}else{
+			if(! in_array($d2[$j],$material,true)){
+				$kkk=$kkk."1";
+			}
+
+		}
 	}
-	if (strlen($kkk)==2) {
+	
+	if (strlen($kkk)==sizeof($d2)) {
 		$Copened[sizeof($Copened)]=$Cneeded[$i];
 	}
 }
 //print_r($Copened);
 //echo "<br> <br> <br>";
+//
+
+//
 $recomended=array();
 $recomended_add=array();
+$recomended_add_out=array();
 $recomended_main=array();
-$sorted=array();
 $looper=sizeof($Copened);
-
-  //echo "================================================<br><br>";
-  // echo "Courses<br><br>";
+//echo "<br> copened <br>";
 //print_r($Copened);
+//echo "<br>";
+//echo "<br> priority_array_main <br>";
+//print_r($priority_array_main);
+//echo "<br>";
 while(sizeof($Copened)>0 && ($looper!=0)){
 	$rot=-1;
 	for ($i=0; $i <sizeof($Copened) ; $i++) {
@@ -316,32 +292,217 @@ while(sizeof($Copened)>0 && ($looper!=0)){
 	if (in_array('add',$cources_arra[$Copened[$rot]],true)) {
 		$recomended_add[sizeof($recomended_add)]=$Copened[$rot];
 	}else{
-		$recomended_main[sizeof($recomended_main)]=$Copened[$rot];
+		if (in_array('addout',$cources_arra[$Copened[$rot]],true)) {
+			$recomended_add_out[sizeof($recomended_add_out)]=$Copened[$rot];
+		}else{
+			$recomended_main[sizeof($recomended_main)]=$Copened[$rot];
+		}
 	}
 	$recomended[sizeof($recomended)]=$Copened[$rot];
-	if($key != 0){
-	$sorted[] = array($Copened[$rot],$key);
-	}
+	// echo $Copened[$rot]."      ".$key."<br>";
 	$looper--;
 }
 
-	// print_r($recomended_main);
 
-	foreach ($recomended_main as $course) {
 
-	$title = Courses::where('prefix', $course)->pluck('title');
-    $title = Courses::where('prefix', $course)->pluck('title');
-	$finalcourses[] = array('prefix' => $course,'title' => $title);
+for ($i=0; $i <sizeof($cources_arra_keys) ; $i++) { 
+	$d2=explode(",",$cources_arra[$cources_arra_keys[$i]][1]);
+	if(sizeof($d2)==1){
+		if(is_numeric($d2[0])){
+			if($cources_arra_keys[$i]==='root'){}else{
+				$keyii=$cources_arra[$cources_arra_keys[$i]][1];
+				if (!array_key_exists($keyii, $cources_arra)) {
+					if($keyii<=$number_of_units_taken){
+							$recomended[sizeof($recomended)]=$cources_arra_keys[$i];
+							if (in_array('add',$cources_arra[$cources_arra_keys[$i]],true)) {
+								$recomended_add[sizeof($recomended_add)]=$cources_arra_keys[$i];
+							}else{
+								if (in_array('addout',$cources_arra[$cources_arra_keys[$i]],true)) {
+									$recomended_add_out[sizeof($recomended_add_out)]=$cources_arra_keys[$i];
+								}else{
+									$recomended_main[sizeof($recomended_main)]=$cources_arra_keys[$i];
+								}
+							}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+// echo "<br>";
+// print_r($recomended);
+// echo "<br>";
+// print_r($recomended_main);
+$number_of_add_taken=0;
+for ($i=0; $i <sizeof($courses) ; $i++) { 
+	if(in_array('add',$cources_arra[$courses[$i]],true)){
+		$number_of_add_taken=$number_of_add_taken+1;
+	}
+}
+// echo "<br> i wanna play a game <br> you have to choose ".(3-$number_of_add_taken)." from the following <br>";
+// print_r($recomended_add);
+// echo "<br> courses out of plan <br>";
+
+$number_of_addout_taken=0;
+for ($i=0; $i <sizeof($courses) ; $i++) { 
+	if(in_array('addout',$cources_arra[$courses[$i]],true)){
+		$number_of_addout_taken=$number_of_addout_taken+1;
+	}
+}
+// echo "<br> i wanna play a game <br> you have to choose ".(2-$number_of_addout_taken)." from the following <br>";
+// print_r($recomended_add_out);
+$guiding0=array();
+for ($i=0; $i <sizeof($recomended_main) ; $i++) { 
+	$p=($cources_arra[$recomended_main[$i]][2]-1);
+	
+	if(array_key_exists($p, $guiding0)){
+		$guiding0[$p][sizeof($guiding0[$p])]=$recomended_main[$i];
+	}
+	else{
+		$guiding0[$p][0]=$recomended_main[$i];	
+	}
+}
+// echo "<br> guiding0 <br>";
+// print_r($guiding0);
+
+$guiding1=array();
+for ($i=0; $i <sizeof($recomended_add) ; $i++) { 
+	$p=($cources_arra[$recomended_add[$i]][3]-1);
+	
+	if(array_key_exists($p, $guiding1)){
+		$guiding1[$p][sizeof($guiding1[$p])]=$recomended_add[$i];
+	}
+	else{
+		$guiding1[$p][0]=$recomended_add[$i];	
+	}
+}
+// echo "<br> guiding1 <br>";
+// print_r($guiding1);
+
+
+$guiding2=array();
+for ($i=0; $i <sizeof($recomended_add_out) ; $i++) { 
+	$p=($cources_arra[$recomended_add_out[$i]][3]-1);
+	
+	if(array_key_exists($p, $guiding2)){
+		$guiding2[$p][sizeof($guiding2[$p])]=$recomended_add_out[$i];
+	}
+	else{
+		$guiding2[$p][0]=$recomended_add_out[$i];	
+	}
+}
+// echo "<br> guiding2 <br>";
+// print_r($guiding2);
+
+$resulting_matrix=array();
+for ($i=0; $i < 8 && sizeof($resulting_matrix)!=6; $i++) { 
+	if (array_key_exists($i,$guiding0)) {
+		for ($j=0; $j<sizeof($guiding0[$i]) && sizeof($resulting_matrix)!=6; $j++) { 
+			$resulting_matrix[sizeof($resulting_matrix)]=$guiding0[$i][$j];	
+		}
+	}
+	if (array_key_exists($i,$guiding1)) {
+		for ($j=0; $j<sizeof($guiding1[$i]) && sizeof($resulting_matrix)!=6 && $j<(3-$number_of_add_taken); $j++) { 
+			$resulting_matrix[sizeof($resulting_matrix)]='مادة إضافية من داخل القسم';	
+		}
+	}
+	if (array_key_exists($i,$guiding2)) {
+		for ($j=0; $j<sizeof($guiding2[$i]) && sizeof($resulting_matrix)!=6 && $j<(2-$number_of_addout_taken); $j++) { 
+			$resulting_matrix[sizeof($resulting_matrix)]='مادة إضافية من خارج القسم';	
+		}
+	}
+}
+// echo "<br> result <br>";
+// print_r($resulting_matrix);
+
+// // print_r($guiding0); // Main courses sorted by semster then sorted by prority
+// // echo "<br> <br>";
+// // print_r($guiding1); // Electives from student department 
+// // echo "<br> <br>";
+// // print_r($guiding2); // Breath Electives from student department
+// // echo "<br> <br>";
+// // print_r($resulting_matrix); // Final Courses with Courses and breath
+// // echo "<br> <br>";
+
+	// foreach ($resulting_matrix as $course) {
+
+	// 	$title = Courses::where('prefix', $course)->pluck('title');
+	// 	$title = Courses::where('prefix', $course)->pluck('title');
+	// 	$finalcourses[] = array('prefix' => $course,'title' => $title);
+
+	// }
+// 	// // print_r($finalcourses);
+// 	// return View::make('student.guide', array('courses' => $finalcourses));
+
+$electivecourses = '';
+$belectivecourses ='';
+
+foreach ($resulting_matrix as $course) {
+
+		$title = Courses::where('prefix', $course)->pluck('title');
+		$units = Plans::where('course', $course)->pluck('units');
+		if ($title && $units) {
+			$maincourses[] = array('prefix' => $course,'title' => $title,'unit' => $units);
+		}
+		else{
+			$maincourses[] = array('prefix' => $course,'title' => '-','unit' => '-');
+		}
+		
 
 	}
-	// print_r($finalcourses);
-	    return View::make('student.guide', array('courses' => $finalcourses));
+
+if (isset($guiding1[5]) && $number_of_add_taken < 3) {
+	foreach ($guiding1[5] as $course) {
+
+		$title = Courses::where('prefix', $course)->pluck('title');
+		$units = Plans::where('course', $course)->pluck('units');
+		
+		if ($title && $units) {
+			$electivecourses[] = array('prefix' => $course,'title' => $title,'unit' => $units);
+		}
+		else{
+			$maincourses[] = array('prefix' => $course,'title' => '-','unit' => '-');
+		}
+
+
 	}
+}
+	
+	if (Auth::user()->depratment != 'it') {
+		# code...
 
 
+if (isset($guiding2[6]) && $number_of_addout_taken < 2) {
+foreach ($guiding2[6] as $course) {
 
-	public function login()
-	{
-		return View::make('login');
+		$title = Courses::where('prefix', $course)->pluck('title');
+		$units = Plans::where('course', $course)->pluck('units');
+		
+
+		if ($title && $units) {
+			$belectivecourses[] = array('prefix' => $course,'title' => $title,'unit' => $units);
+		}
+		else{
+			$maincourses[] = array('prefix' => $course,'title' => '-','unit' => '-');
+		}
+
+
 	}
+}	}
+
+
+// // 'electivecourses' => $electivecourses,'belectivecourses' => $belectivecourses
+
+// 	// print_r($finalcourses);
+	return View::make('student.guide', array('maincourses' => $maincourses,'electivecourses' => $electivecourses,'belectivecourses' => $belectivecourses));
+}
+
+
+
+public function login()
+{
+	return View::make('login');
+}
 }

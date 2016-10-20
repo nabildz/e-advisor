@@ -11,7 +11,7 @@
    
     	<div class="wide column"> <button class="big ui blue button fluid"><a style="color:#ffffff!important;" href="{{ URL::route('guide') }}">الى المرشد</a></button></div>
 		<div class="wide column"> <button class="big ui green button fluid"><a style="color:#ffffff!important;" href="{{ URL::route('courses') }}">اضافة مادة جديدة +</a></button></div>
-		<div class="wide column"> <button class="big ui  button fluid"><a style="color:#000000!important;" href="{{ URL::route('guide') }}">تعديل المعلومات الشخصية</a></button></div>
+		<div class="wide column"> <button class="big ui  button fluid"><a style="color:#000000!important;" href="{{ URL::route('editinfo') }}">تعديل المعلومات الشخصية</a></button></div>
 
 
   </div>

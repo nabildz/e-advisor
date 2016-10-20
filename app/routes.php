@@ -15,7 +15,7 @@ Route::get('/', 'StudentController@register');
 Route::get('home',  ['before' => 'auth','as' => 'home',  'uses' =>  'GuideController@home']);
 Route::get('guide',  ['before' => 'auth','as' => 'guide',  'uses' =>  'GuideController@guide']);
 Route::get('courses',  ['before' => 'auth','as' => 'courses',  'uses' =>  'GuideController@courses']);
-
+Route::post('stored',  ['before' => 'auth','as' => 'store_courses',  'uses' =>  'GuideController@store_courses']);
 /*
 |--------------------------------------------------------------------------
 | Auth Routes
@@ -27,6 +27,8 @@ Route::get('login',   ['as' => 'show_login',  'uses' =>  'StudentController@show
 Route::post('login',  ['as' => 'login',  'uses' =>  'StudentController@do_Login']);
 Route::get('logout',  ['before' => 'auth','as' => 'logout',  'uses' =>  'StudentController@do_Logout']);
 
+
+
 /*
 |--------------------------------------------------------------------------
 | Student Routes
@@ -36,3 +38,5 @@ Route::get('logout',  ['before' => 'auth','as' => 'logout',  'uses' =>  'Student
 
 Route::get('register',  ['as' => 'register',  'uses' =>  'StudentController@register']);
 Route::post('regisered',  ['as' => 'store_student',  'uses' =>  'StudentController@store_student']);
+Route::get('editinfo',  ['before' => 'auth','as' => 'editinfo',  'uses' =>  'StudentController@editinfo']);
+Route::post('updated',  ['as' => 'update_student',  'uses' =>  'StudentController@update_student']);

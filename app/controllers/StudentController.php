@@ -90,6 +90,43 @@ class StudentController extends \BaseController {
 		
 	}
 
+	public function editinfo(){
+		$departments = Departments::all();
+		return View::make('student.editinfo' ,array('departments' => $departments));
+
+	}
+
+	public function update_student(){
+			$messsages = array(
+	        'name' => 'required',
+		
+	    );
+			 $rules = array(
+			'name' => 'required',
+		
+
+		);
+			$validator = Validator::make(Input::all(), $rules,$messsages);
+			if ($validator->fails()) {
+			$messages = $validator->messages();
+			return Redirect::to('editinfo')->withInput(Input::except('password'))->withErrors($validator);
+			} 
+			else {
+
+			$student = Student::find(Input::get('id'));
+			$student->name = Input::get('name');
+			$student->password = Hash::make(Input::get('password'));
+			$student->depratment = Input::get('depratment');
+
+	        if ($student->save()) {
+	        	 return Response::view('messages.update-success');
+	        	// echo "updated";
+	        }
+			}
+			
+
+	}
+
 	public function store()
 	{
 		return View::make('register');
